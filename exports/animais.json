@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "nome": "Bob",
+    "raca": "indefinida",
+    "especie": "Cachorro",
+    "idade": 13,
+    "peso": 14.0,
+    "cpf_dono": "22222222222"
+  },
+  {
+    "id": 2,
+    "nome": "Mimi",
+    "raca": "indefinida",
+    "especie": "Gato",
+    "idade": 14,
+    "peso": 15.0,
+    "cpf_dono": "11111111111"
+  },
+  {
+    "id": 3,
+    "nome": "Aurora",
+    "raca": "shituz",
+    "especie": "Cachorro",
+    "idade": 19,
+    "peso": 42.0,
+    "cpf_dono": "09106641140"
+  },
+  {
+    "id": 4,
+    "nome": "Eloa",
+    "raca": "vira lata",
+    "especie": "Cachorro",
+    "idade": 16,
+    "peso": 55.0,
+    "cpf_dono": "0303030303"
+  }
+]

@@ -7,10 +7,9 @@ if TYPE_CHECKING:
     from .veterinario import Veterinario
     from .animal import Animal
 
-class Atendimento: #A classe Atendimento gerencia os agendamentos e procedimentos realizados no pet shop.
-
+class Atendimento: 
     def __init__(self, cliente: "Cliente", animal: "Animal", veterinario: "Veterinario" = None, 
-                 servicos: List[str] = None, data_agendada: str = None, hora_agendada: str = None):
+                 servicos: List[str] = None, data_agendada: str = None, hora_agendada: str = None, db_id: Any = None):
         
     
         self.cliente = cliente
@@ -24,6 +23,7 @@ class Atendimento: #A classe Atendimento gerencia os agendamentos e procedimento
 
         self.servicos_solicitados = [s.lower() for s in servicos] if servicos else []
         self.procedimentos: List[str] = [] 
+        self.db_id = db_id
 
     def adicionar_procedimento(self, procedimento: str):
         self.procedimentos.append(procedimento)

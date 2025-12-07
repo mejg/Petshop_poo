@@ -3,14 +3,10 @@ import os
 from abc import ABC, abstractmethod
 from typing import Tuple, Any
 
-# Ajusta o caminho de importação (necessário para o Python encontrar os módulos)
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 
 class Animal(ABC):
-    """
-    Classe Abstrata Animal adaptada para persistência SQL.
-    Adiciona atributos e métodos para conversão de/para o banco de dados.
-    """
+
     def __init__(self, nome: str, raca: str, especie: str, idade: int, peso: float, dono_cpf: str = None, db_id: any = None):
         
         self.nome = nome

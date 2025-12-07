@@ -1,0 +1,30 @@
+[
+  {
+    "crm": "012345",
+    "nome": "Sabotage",
+    "cpf": "44444444444",
+    "telefone": "44 4444-4444",
+    "especialidade": "Clinica Geral"
+  },
+  {
+    "crm": "123456",
+    "nome": "Mano Brown",
+    "cpf": "00011122233",
+    "telefone": "1524859",
+    "especialidade": "Clinica geral"
+  },
+  {
+    "crm": "12121",
+    "nome": "Djvan",
+    "cpf": "12121212",
+    "telefone": "121212",
+    "especialidade": "Melhor de todos"
+  },
+  {
+    "crm": "66666",
+    "nome": "Ozzy",
+    "cpf": "666666666",
+    "telefone": "6666666",
+    "especialidade": "clinica geral"
+  }
+]

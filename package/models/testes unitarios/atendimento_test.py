@@ -23,21 +23,3 @@ atendimento.adicionar_procedimento("Corte unhas")
 atendimento.adicionar_procedimento("Vacinação")
 
 print(atendimento.exibir_resumo())
-
-"""
-RETONARÁ:
---- AGENDAMENTO ----
-DATA REGISTRO: 13/10/2025 21:18:53   | DATA AGENDADA: 16/10/2025 14:00
-DONO: Reginaldo Guimarães   | CPF: 000.111.222-33
-ANIMAL: Aurora   | ESPÉCIE: cachorro   | RAÇA: poodle
-VETERINÁRIO: Isabelly Dantas   | CRM: 123456/DF
-SERVIÇOS SOLICITADOS: Consulta, Banho E Tosa
-RISCO VETERINÁRIO: ALTO (sobrepeso/idoso)
-
-PROCEDIMENTOS EXTRAS:
- - Corte unhas
- - Vacinação
-CUSTO TOTAL FINAL: R$ 351.49
-------------------------------------------------------
-
-"""

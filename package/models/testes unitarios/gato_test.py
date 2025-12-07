@@ -16,12 +16,3 @@ print (f"\nAnimal cadrastado: \n{gato_teste.exibir_info()}")
 print (f"Custo banho: R$ {gato_teste.calcular_banho_tosa()}")
 print (f"Custo consulta: R$ {gato_teste.calcular_consulta()}\n")
 
-"""
-RETONARÁ:
-Animal cadrastado: 
-Nome: Mimi  |  Espécie: gato  
-Raça: Siamês  |  Idade: 7 anos 
-Risco Veterinário: MÉDIO (risco de sobrepeso/mobilidade)
-Custo banho: R$ 70
-Custo consulta: R$ 130
-"""

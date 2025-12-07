@@ -23,20 +23,3 @@ cliente_teste.adicionar_animal(gato2)
 
 print("\n2. Animais do Cliente:")
 print(cliente_teste.listar_animais())
-
-"""
-Retorna:
-Pessoa cadastrada:
-Nome: Jéssica Guimarães   | CPF: 000.111.222-33
-Telefone de contato: 4002-8922
-Exibir tipo: Cliente
-
-2. Animais do Cliente:
- Animais do cliente Jéssica Guimarães:
- - Nome: Aurora  |  Espécie: gato
-Raça: Siamês  |  Idade: 5 anos
-Risco Veterinário: BAIXO (rotina)
- - Nome: Preguicinha  |  Espécie: gato
-Raça: Indefinida  |  Idade: 13 anos
-Risco Veterinário: ALTO (sobrepeso/idoso)
-"""

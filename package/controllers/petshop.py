@@ -54,29 +54,25 @@ class PetShopController:
             '4': lambda: True
         }
 
-    # --- NOVO MÉTODO: CARREGAR DADOS DO BD ---
     def _load_data_from_db(self):
-        """Carrega todos os dados das tabelas para as listas de objetos POO (Reconstrução)."""
+
         print("\n[BD] Carregando dados do disco...")
         
-        # 1. Limpa as listas atuais (para garantir que não haja duplicação)
         self.clientes.clear()
         self.veterinarios.clear()
         self.animais.clear()
         self.atendimentos.clear()
         
-        # 2. Carregar Clientes e Animais (Reconstrução de Objetos e Associações)
         clientes_data = self.db_manager.select_all_clientes()
         
         for cpf, nome, telefone in clientes_data:
-            # Reconstrução do objeto POO Cliente
+
             cliente = Cliente(nome, cpf, telefone) 
             self.clientes.append(cliente)
             
-            # 2. Carregar Animais associados a este Cliente (Associação)
             animais_data = self.db_manager.select_animal_by_cpf(cpf)
             for db_id, nome_a, raca, especie, idade, peso, dono_cpf in animais_data:
-                # Polimorfismo na reconstrução: usa o from_db() de cada classe
+
                 if especie == 'Cachorro':
                     animal = Cachorro.from_db((db_id, nome_a, raca, especie, idade, peso, dono_cpf))
                 elif especie == 'Gato':
@@ -85,25 +81,23 @@ class PetShopController:
                     continue 
                 
                 self.animais.append(animal)
-                cliente.adicionar_animal(animal) # Associa o objeto Animal ao Cliente
+                cliente.adicionar_animal(animal) 
         
-        # 3. Carregar Veterinários
         vets_data = self.db_manager.select_all_veterinarios()
         for crm, nome, especialidade, telefone in vets_data:
-            # Reconstrução do objeto POO Veterinario (CPF é 'N/A' pois CRM é a PK)
+
             vet = Veterinario(nome, 'N/A', telefone, crm, especialidade)
             self.veterinarios.append(vet)
 
-        # 4. Carregar Atendimentos (Complexo)
+
         atendimentos_data = self.db_manager.select_all_atendimentos()
         for id_at, cliente_cpf, vet_crm, animal_id, servicos_json, procedimentos_json, data_agendada, custo_total in atendimentos_data:
             
-            # Buscar objetos associados
+
             cliente = self.encontrar_objeto(self.clientes, 'cpf', cliente_cpf)
             veterinario = self.encontrar_objeto(self.veterinarios, 'crm', vet_crm) if vet_crm else None
             animal = self.encontrar_objeto(self.animais, 'db_id', animal_id)
             
-            # Reconstrução do objeto Atendimento
             if cliente and animal:
                 atendimento = Atendimento(
                     cliente=cliente,
@@ -118,8 +112,6 @@ class PetShopController:
                 if veterinario:
                     veterinario.adicionar_atendimento(atendimento)
         
-        print(f"[BD] Carregados {len(self.clientes)} Clientes e {len(self.veterinarios)} Veterinários.")
-
 
     def validar_numero(self, prompt: str, tipo: type = float):
         while True:
@@ -154,8 +146,6 @@ class PetShopController:
                     return obj
         return None
     
-    # --- FLUXO DE MENU PRINCIPAL E CADASTROS (migrados para BD) ---
-
     def menu_principal(self):
         output = True
         while output:
@@ -187,7 +177,7 @@ class PetShopController:
                 self.default()
     
     def menu_agendar_servicos(self):
-        """Exibe o submenu de agendamento."""
+
         while True:
             print("\n ------- AGENDAR SERVIÇOS -------")
             print("1. Agendar Consulta")
@@ -200,10 +190,11 @@ class PetShopController:
             
             if acao:
                 if escolha == '4':
-                    return True # Retorna True para manter o loop do menu principal ativo
+                    return True 
                 acao()
             else:
                 self.default()
+
     def cadastrar_cliente(self):
         print("\n ------- NOVO CLIENTE (Persistência SQL) ------- ")
         nome = self.validar_vazio("Nome do Cliente: ")
@@ -215,9 +206,11 @@ class PetShopController:
         
         if self.db_manager.insert_cliente(novo_cliente):
             self.clientes.append(novo_cliente)
-            print(f"\nSucesso! Cliente '{nome}' cadastrado e SALVO PERMANENTEMENTE.")
+            self.db_manager.export_all_to_json()
+            print(f"\nSucesso! Cliente '{nome}' cadastrado e SALVO.")
         else:
             print("\nERRO: Falha ao salvar no banco de dados. Cliente pode já existir.")
+
     def cadastrar_veterinario(self):
         print("\n ------- NOVO VETERINÁRIO (Persistência SQL) -------")
         nome = self.validar_vazio("Nome do Veterinário: ")
@@ -231,7 +224,8 @@ class PetShopController:
 
         if self.db_manager.insert_veterinario(novo_vet):
             self.veterinarios.append(novo_vet)
-            print(f"\nSucesso! Veterinário '{nome}' cadastrado e SALVO PERMANENTEMENTE.")
+            self.db_manager.export_all_to_json()
+            print(f"\nSucesso! Veterinário '{nome}' cadastrado e SALVO.")
         else:
             print("\nERRO: Falha ao salvar no banco de dados. CRM pode já existir.")
 
@@ -260,11 +254,11 @@ class PetShopController:
             print("Espécie inválida. Apenas Cachorro ou Gato. \nTente novamente.")
             return
 
-        # PERSISTÊNCIA: Insere no BD e recebe o ID gerado
+ 
         animal_id = self.db_manager.insert_animal(novo_animal)
 
         if animal_id:
-            novo_animal.db_id = animal_id  # Atribui o ID de volta ao objeto
+            novo_animal.db_id = animal_id 
             self.animais.append(novo_animal)
             cliente_dono.adicionar_animal(novo_animal)
             print(f"\nSucesso! Animal '{nome}' cadastrado e SALVO no BD (ID: {animal_id}).")
@@ -272,10 +266,8 @@ class PetShopController:
             print("\nERRO: Falha ao salvar o Animal no Banco de Dados.")
 
 
-    # --- MÉTODOS DE AGENDAMENTO (IMPLEMENTAÇÃO FINAL DO NÍVEL 3) ---
-
     def _obter_dados_agendamento(self, servico_tipo: str) -> Dict[str, Any] | None:
-        """Função auxiliar para obter e validar Cliente e Animal."""
+ 
         if not self.clientes or not self.animais:
             print("\nERRO: Cadastre pelo menos 1 Cliente e 1 Animal antes de agendar.")
             return None
@@ -321,7 +313,6 @@ class PetShopController:
             print("Veterinário não encontrado. Operação cancelada.")
             return True
 
-        # 1. CRIAÇÃO DO ATENDIMENTO (Associação)
         novo_atendimento = Atendimento(
             cliente=dados['cliente'], 
             animal=dados['animal'], 
@@ -334,7 +325,8 @@ class PetShopController:
 
             self.atendimentos.append(novo_atendimento)
             veterinario_responsavel.adicionar_atendimento(novo_atendimento)
-            print("\nConsulta agendada e SALVA PERMANENTEMENTE com sucesso!")
+            self.db_manager.export_all_to_json()
+            print("\nConsulta agendada e SALVA com sucesso!")
             print(novo_atendimento.exibir_resumo())
         else:
             print("\nERRO: Falha ao salvar atendimento no Banco de Dados.")
@@ -357,7 +349,6 @@ class PetShopController:
             print("Serviço inválido. Operação cancelada.")
             return True
 
-        # CRIAÇÃO DO ATENDIMENTO - BANHO E TOSA (Associação)
         novo_atendimento = Atendimento(
             cliente=dados['cliente'], 
             animal=dados['animal'], 
@@ -366,10 +357,10 @@ class PetShopController:
             data_agendada=dados['data_agendada']
         )
         
-        # PERSISTÊNCIA CRUCIAL: Salva o objeto Atendimento no BD
         if self.db_manager.insert_atendimento(novo_atendimento):
             self.atendimentos.append(novo_atendimento)
-            print("\nBanho e Tosa agendado e SALVO PERMANENTEMENTE com sucesso!")
+            self.db_manager.export_all_to_json()
+            print("\nBanho e Tosa agendado e SALVO com sucesso!")
             print(novo_atendimento.exibir_resumo())
         else:
             print("\nERRO: Falha ao salvar atendimento no Banco de Dados.")
@@ -383,7 +374,7 @@ class PetShopController:
             return True
             
         print("\nAtendimentos Registrados:")
-        # Simplificação: Usamos a lista inteira de atendimentos
+
         for i, at in enumerate(self.atendimentos):
             print(f"{i+1}. {at.animal.nome} - Dono: {at.cliente.nome} ({at.data_agendada})")
         
@@ -397,7 +388,6 @@ class PetShopController:
         procedimento = self.validar_vazio("Descrição do Procedimento Extra: ")
         atendimento_selecionado.adicionar_procedimento(procedimento)
         
-        # PERSISTÊNCIA: Atualiza o objeto no BD
         novo_custo = atendimento_selecionado.calcular_total()
         
         if self.db_manager.update_atendimento_procedimentos(atendimento_selecionado.db_id, atendimento_selecionado.procedimentos, novo_custo):
@@ -408,11 +398,9 @@ class PetShopController:
             print("ERRO: Falha ao atualizar o procedimento no Banco de Dados.")
 
         return True
-
-    # --- MÉTODOS DE LISTAGEM ---
     
     def listar_dados(self):
-        """Exibe o submenu de listagem."""
+
         while True:
             print("\n--- Menu de Listagem ---")
             print("1. Listar Clientes")
@@ -453,6 +441,9 @@ class PetShopController:
         if not self.animais:
             print("Nenhum animal cadastrado.")
             return
+        for i, animal in enumerate(self.animais):
+            print(f"\n{i+1}. {animal.exibir_info()}")
+
     def listar_atendimentos(self):
         print("\n--- Histórico de Atendimentos ---")
         if not self.atendimentos:
@@ -463,16 +454,19 @@ class PetShopController:
             print(atendimento.exibir_resumo())
 
     def default(self):
-        """Ação padrão quando uma opção inválida é informada."""
+
         print("Opção inválida. Tente novamente.")
         return True
 
     def sair(self):
-        """Encerra o menu principal retornando False para o loop."""
+
         print("\nSaindo do sistema. Até logo!")
         return False
         for i, atendimento in enumerate(self.atendimentos):
             print(f"\n--- ATENDIMENTO #{i+1} ---")
             print(atendimento.exibir_resumo())
 
-    
+    def exportar_dados(self):
+        arquivos = self.db_manager.export_all_to_json('.', 'backup')
+        print("[EXPORT] Arquivos gerados:", arquivos)
+        return True

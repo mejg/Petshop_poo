@@ -8,11 +8,10 @@ class DatabaseManager:
         self.criar_tabelas()
     
     def criar_tabelas(self):
-        """Cria todas as tabelas necessárias."""
+
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         
-        # Tabela Clientes
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS clientes (
                 cpf TEXT PRIMARY KEY,
@@ -21,7 +20,6 @@ class DatabaseManager:
             )
         ''')
         
-        # Tabela Veterinários
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS veterinarios (
                 crm TEXT PRIMARY KEY,
@@ -32,7 +30,6 @@ class DatabaseManager:
             )
         ''')
         
-        # Tabela Animais
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS animais (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,7 +43,6 @@ class DatabaseManager:
             )
         ''')
         
-        # Tabela Atendimentos
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS atendimentos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,9 +62,8 @@ class DatabaseManager:
         conn.commit()
         conn.close()
     
-    # ========== CLIENTES ==========
     def insert_cliente(self, cliente):
-        """Insere um cliente no BD."""
+
         try:
             conn = sqlite3.connect(self.db_file)
             cursor = conn.cursor()
@@ -87,7 +82,7 @@ class DatabaseManager:
             return False
     
     def select_all_clientes(self):
-        """Retorna todos os clientes."""
+  
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute('SELECT cpf, nome, telefone FROM clientes')
@@ -95,9 +90,9 @@ class DatabaseManager:
         conn.close()
         return clientes
     
-    # ========== VETERINÁRIOS ==========
+  
     def insert_veterinario(self, veterinario):
-        """Insere um veterinário no BD."""
+
         try:
             conn = sqlite3.connect(self.db_file)
             cursor = conn.cursor()
@@ -116,7 +111,7 @@ class DatabaseManager:
             return False
     
     def select_all_veterinarios(self):
-        """Retorna todos os veterinários."""
+
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute('SELECT crm, nome, especialidade, telefone FROM veterinarios')
@@ -124,9 +119,8 @@ class DatabaseManager:
         conn.close()
         return vets
     
-    # ========== ANIMAIS ==========
     def insert_animal(self, animal):
-        """Insere um animal e retorna o ID gerado."""
+
         try:
             conn = sqlite3.connect(self.db_file)
             cursor = conn.cursor()
@@ -143,7 +137,7 @@ class DatabaseManager:
             return None
     
     def select_animal_by_cpf(self, cpf):
-        """Retorna todos os animais de um cliente."""
+
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute('SELECT id, nome, raca, especie, idade, peso, cpf_dono FROM animais WHERE cpf_dono = ?', (cpf,))
@@ -151,9 +145,8 @@ class DatabaseManager:
         conn.close()
         return animais
     
-    # ========== ATENDIMENTOS ==========
     def insert_atendimento(self, atendimento):
-        """Insere um atendimento no BD."""
+
         try:
             conn = sqlite3.connect(self.db_file)
             cursor = conn.cursor()
@@ -181,7 +174,7 @@ class DatabaseManager:
             return False
     
     def select_all_atendimentos(self):
-        """Retorna todos os atendimentos."""
+
         conn = sqlite3.connect(self.db_file)
         cursor = conn.cursor()
         cursor.execute('SELECT id, cpf_cliente, crm_veterinario, id_animal, servicos, procedimentos, data_agendada, custo_total FROM atendimentos')
@@ -190,7 +183,7 @@ class DatabaseManager:
         return atendimentos
     
     def update_atendimento_procedimentos(self, atendimento_id, procedimentos, novo_custo):
-        """Atualiza procedimentos e custo de um atendimento."""
+
         try:
             conn = sqlite3.connect(self.db_file)
             cursor = conn.cursor()
@@ -204,3 +197,69 @@ class DatabaseManager:
         except Exception as e:
             print(f"Erro ao atualizar atendimento: {e}")
             return False
+        
+    def export_clientes_to_json(self, filename= 'clientes.json'):
+
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute('SELECT cpf, nome, telefone FROM clientes')
+        rows = cur.fetchall()
+        clientes = [{"cpf": r[0], "nome": r[1], "telefone": r[2]} for r in rows]
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(clientes, f, ensure_ascii=False, indent=2)
+        return filename
+    
+    def export_veterinarios_to_json(self, filename= 'veterinarios.json'):
+
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute('SELECT crm, nome, cpf, telefone, especialidade FROM veterinarios')
+        rows = cur.fetchall()
+        veterinarios = [{"crm": r[0], "nome": r[1], "cpf": r[2], "telefone": r[3], "especialidade": r[4]} for r in rows]
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(veterinarios, f, ensure_ascii=False, indent=2)
+        return filename
+    
+    def export_animais_to_json(self, filename= 'animais.json'):
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute('SELECT id, nome, raca, especie, idade, peso, cpf_dono FROM animais')
+        rows = cur.fetchall()
+        animais = [{"id": r[0], "nome": r[1], "raca": r[2], "especie": r[3], "idade": r[4], "peso": r[5], "cpf_dono": r[6]} for r in rows]
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(animais, f, ensure_ascii=False, indent=2)
+        return filename
+    
+    def export_atendimentos_to_json(self, filename= 'atendimentos.json'):
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute('SELECT id, cpf_cliente, crm_veterinario, id_animal, servicos, procedimentos, data_agendada, custo_total FROM atendimentos')
+        rows = cur.fetchall()
+        atendimentos = []
+        for r in rows:
+            atendimentos.append({
+                "id": r[0],
+                "cpf_cliente": r[1],
+                "crm_veterinario": r[2],
+                "id_animal": r[3],
+                "servicos": json.loads(r[4]),
+                "procedimentos": json.loads(r[5]) if r[5] else [],
+                "data_agendada": r[6],
+                "custo_total": r[7]
+            })
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(atendimentos, f, ensure_ascii=False, indent=2)
+        return filename
+    
+    def export_all_to_json(self, directory='exports'):
+        Path(directory).mkdir(parents=True, exist_ok=True)
+        clientes_file = self.export_clientes_to_json(str(Path(directory) / 'clientes.json'))
+        veterinarios_file = self.export_veterinarios_to_json(str(Path(directory) / 'veterinarios.json'))
+        animais_file = self.export_animais_to_json(str(Path(directory) / 'animais.json'))
+        atendimentos_file = self.export_atendimentos_to_json(str(Path(directory) / 'atendimentos.json'))
+        return {
+            "clientes": clientes_file,
+            "veterinarios": veterinarios_file,
+            "animais": animais_file,
+            "atendimentos": atendimentos_file
+        }

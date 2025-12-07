@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "cpf_cliente": "11111111111",
+    "crm_veterinario": "012345",
+    "id_animal": 2,
+    "servicos": [
+      "consulta"
+    ],
+    "procedimentos": [],
+    "data_agendada": "25/12/2025 23:59",
+    "custo_total": 150.0
+  },
+  {
+    "id": 2,
+    "cpf_cliente": "11111111111",
+    "crm_veterinario": null,
+    "id_animal": 2,
+    "servicos": [
+      "tosa"
+    ],
+    "procedimentos": [
+      "Cortar unhas"
+    ],
+    "data_agendada": "25/12/2025 00:00",
+    "custo_total": 110.0
+  },
+  {
+    "id": 3,
+    "cpf_cliente": "09106641140",
+    "crm_veterinario": "012345",
+    "id_animal": 3,
+    "servicos": [
+      "consulta"
+    ],
+    "procedimentos": [
+      "castração"
+    ],
+    "data_agendada": "09/12/2025 12:40",
+    "custo_total": 200.0
+  }
+]
