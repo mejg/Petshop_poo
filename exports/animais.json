@@ -34,5 +34,23 @@
     "idade": 16,
     "peso": 55.0,
     "cpf_dono": "0303030303"
+  },
+  {
+    "id": 5,
+    "nome": "Morgana",
+    "raca": "indefinida",
+    "especie": "Gato",
+    "idade": 1,
+    "peso": 3.0,
+    "cpf_dono": "55555555"
+  },
+  {
+    "id": 6,
+    "nome": "Kyle",
+    "raca": "indefinida",
+    "especie": "Gato",
+    "idade": 1,
+    "peso": 3.0,
+    "cpf_dono": "55555555"
   }
 ]

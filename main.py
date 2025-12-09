@@ -1,5 +1,7 @@
-from package.controllers.petshop import PetShopController
+from package.controllers.gui import PetShopGUI
+import tkinter as tk
 
 if __name__ == '__main__':
-    app = PetShopController()
-    app.menu_principal()
+    root = tk.Tk()
+    app = PetShopGUI(root)
+    root.mainloop()
